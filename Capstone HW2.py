@@ -77,9 +77,13 @@ logx = np.log10(x)
 logym = np.log10(ym)
 
 #Need to minimize r**2 = r**T r ... r = Xa - y or plogx - logym (A added as a row of constants in X?)
-logxT = logx.T
-omega = np.matmul(logxT, logx)
-invomega = linalg.inv(omega)
+ones = np.array([[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1]])
+Xmatrix = np.column_stack((logx, ones))
+XmatrixT = Xmatrix.T
+alpha = np.matmul(XmatrixT, Xmatrix)
+invalpha = linalg.inv(alpha)
+
+
 
 
 plt.scatter(logx,logym)
