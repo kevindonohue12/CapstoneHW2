@@ -1,7 +1,7 @@
 import numpy as np
+from numpy import linalg
 import math as m
 #import pandas as pd
-#from numpy import loadtxt
 import matplotlib.pyplot as plt
 #import statsmodels.api as sm
 from scipy.optimize import minimize
@@ -74,13 +74,22 @@ plt.show()
 #b) Linearize the data and fit it using ordinary least squares (OLS). Find A and p. 
 #y=Ax^p becomes log(y)=log(A)+plog(x) or y=a0 + a1x with log scale
 logx = np.log10(x)
-logy = np.log10(y)
-logym = np.mean(logy, axis=1)
+logym = np.log10(ym)
 
-def chiOLS(vars):
-    return sum(logym-(vars[0]+vars[1]*logx))**2
+#Need to minimize r**2 = r**T r ... r = Xa - y or plogx - logym (A added as a row of constants in X?)
+logxT = logx.T
+omega = np.matmul(logxT, logx)
+invomega = linalg.inv(omega)
 
-minchiOLS = minimize(chiOLS, np.array([1,1]), method='nelder-mead')
+
+plt.scatter(logx,logym)
+
+
+
+#def chiOLS(vars):
+#    return sum((vars[0]+(vars[1]*logx)-logym))**2
+
+#minchiOLS = minimize(chiOLS, np.array([1,1]), method='nelder-mead')
 
 
 
