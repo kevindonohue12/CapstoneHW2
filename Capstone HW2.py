@@ -31,6 +31,8 @@ for line in open(r"C:\Users\Kevin\OneDrive - Northeastern University\Senior Spri
 y = np.stack((y1, y2, y3, y4, y5, y6, y7, y8, y9, y10), axis = 1)
 y_sum = np.zeros([len(x),1], dtype = float)
 
+#-----------------------------------------------------------------------------------------------------
+
 #a) For each x value, determine the average y value, <y>, and its uncertainty. 
 #Determine the best power-law fit to the (x,<y>) data by finding the minimum 
 #χ2 (χ2min). Report χ2min, χ2red (reduced χ2), A, and p. Find the A and p 
@@ -71,39 +73,46 @@ plt.ylabel('p')
 plt.title("|1| Contour around minimum χ2")
 plt.show()
 
-#b) Linearize the data and fit it using ordinary least squares (OLS). Find A and p. 
-#y=Ax^p becomes log(y)=log(A)+plog(x) or y=a0 + a1x with log scale
-logx = np.log10(x)
-logym = np.log10(ym)
+#-----------------------------------------------------------------------------------------------------
 
-#Need to minimize r**2 = r**T r ... r = Xa - y or plogx - logym (A added as a row of constants in X?)
+#b) Linearize the data and fit it using ordinary least squares (OLS). Find A and p. 
+#y=Ax^p becomes ln(y)=ln(A)+pln(x) or y=a0 + a1x with log scale
+logx = np.log(x)
+logym = np.log(ym)
+
+#Need to minimize r**2 = r**T r ... r = Xa - y or plnx - lnym
 ones = np.array([[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1],[1]])
-Xmatrix = np.column_stack((logx, ones))
+Xmatrix = np.concatenate((ones, logx[:, np.newaxis]), axis=1)
 XmatrixT = Xmatrix.T
 alpha = np.matmul(XmatrixT, Xmatrix)
 invalpha = linalg.inv(alpha)
 
+amatrix = np.matmul(np.matmul(invalpha,XmatrixT), logym)
+Avalue = np.exp(amatrix[0])
 
-
-
-plt.scatter(logx,logym)
-
-
-
-#def chiOLS(vars):
-#    return sum((vars[0]+(vars[1]*logx)-logym))**2
-
-#minchiOLS = minimize(chiOLS, np.array([1,1]), method='nelder-mead')
-
-
+#-----------------------------------------------------------------------------------------------------
 
 #c) Use the weighted least squares method (WLS) (as discussed in class) to 
-#fit the linearized data using an analytical function (matrix algebra). Find A and p and their uncertainties. 
+#fit the linearized data using an analytical function (matrix algebra). 
+#Find A and p and their uncertainties. 
+ySEMc = ySEM.reshape((15,1))
+XmatrixWLS = Xmatrix / ySEMc
+XmatrixTWLS = XmatrixWLS.T
+logymWLS = np.divide(logym, ySEM)
+alphaWLS = np.matmul(XmatrixTWLS, XmatrixWLS)
+invalphaWLS = linalg.inv(alphaWLS)
+
+amatrixWLS = np.matmul(np.matmul(invalphaWLS,XmatrixTWLS), logymWLS)
+AvalueWLS = np.exp(amatrixWLS[0])
+
+#Finding Uncertainties in A,p
+
 
 
 #d) Plot the x, <y> data points with error bars on a log scale and the three fits as lines.
 #Compare and discuss the results and any differences between OLS and WLS. Include a comment 
 #on when WLS is most appropriate versus OLS. 
+
 #plt.errorbar(x,ym)
 #plt.show()
 
