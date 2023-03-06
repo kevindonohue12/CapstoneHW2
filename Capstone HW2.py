@@ -5,7 +5,7 @@ import math as m
 import matplotlib.pyplot as plt
 #import statsmodels.api as sm
 from scipy.optimize import minimize
-import statsmodels.api as sm
+#import statsmodels.api as sm
 #from mpl_toolkits.mplot3d import Axes3D
 #from mpl_toolkits import mplot3d
 #from scipy.stats import linregress
@@ -67,6 +67,7 @@ for dA in np.arange(A - 1, A + 1, 0.01):
             if sum(((ym-(dA*np.power(x,dp)))/(ySEM))**2) - minchi.fun > 0.95 and sum(((ym-(dA*np.power(x,dp)))/(ySEM))**2) - minchi.fun < 1.05:
                 ZdA.append(dA)
                 Zdp.append(dp)
+plt.scatter(minchi.x[0],minchi.x[1])
 plt.scatter(ZdA,Zdp)
 plt.xlabel("A")
 plt.ylabel('p')
@@ -118,19 +119,28 @@ xerror = 0.005
 plt.scatter(x,ym)
 plt.errorbar(x,ym, ls = 'none', xerr = xerror, yerr = ySEM, label= "Exp Data")
 
-bestfitax = np.linspace(0,10,15)
+#Part A Power Law Best Fit
+#bestfitax = np.linspace(0,10,15)
 bestfitay = minchi.x[0] * x**minchi.x[1]
-plt.plot(bestfitax, bestfitay, label = 'Power Law')
-bestfitbx = np.linspace(0,10,15)
+plt.plot(x, bestfitay, label = 'Power Law')
+
+#OLS Best Fit
+#bestfitbx = np.linspace(0,10,15)
+#bestfitby = amatrix[0] + np.multiply(logx,amatrix[1])
 bestfitby = Avalue * x**amatrix[1]
-plt.plot(bestfitbx, bestfitby, label = 'OLS')
-bestfitcx = np.linspace(0,10,15)
+plt.plot(x, bestfitby, label = 'OLS')
+
+#WLS Best Fit
+#bestfitcx = np.linspace(0,10,15)
+#bestfitcy = AvalueWLS + np.multiply((logx/ySEM), amatrixWLS[1])
 bestfitcy = AvalueWLS * x**amatrixWLS[1]
-plt.plot(bestfitcx, bestfitcy, label = 'WLS')
+plt.plot(x, bestfitcy, label = 'WLS')
+
+#Plot Parameters
 plt.legend()
 plt.yscale('log')
 plt.xscale('log')
-plt.xlabel('x data')
+plt.xlabel('x date')
 plt.ylabel('<y> data')
 plt.title('<y> as a function of x')
 plt.show()
