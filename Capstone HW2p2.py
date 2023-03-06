@@ -40,7 +40,25 @@ reducedchi = minchi.fun / (25-2)
 
  
 #Find the uncertainties in the parameters using the χ2min +1 method in two dimensions
+beq = minchi.x[0]
+k = minchi.x[1]
 
+Zdbeq = []
+Zdk = []
+dbeq = np.arange(beq - 1, beq + 1, 0.01)
+dk = np.arange(k - 1, k + 1, 0.01)
+for dbeq in np.arange(beq - 1, beq + 1, 0.01):
+        for dk in np.arange(k - 1, k + 1, 0.01):
+            if sum(((xm-(dbeq - (dbeq-0.355)*np.power(m.e,-1*dk*tarr)))/(xSEM))**2) - minchi.fun > 0.95 and sum(((xm-(dbeq - (dbeq-0.355)*np.power(m.e,-1*dk*tarr)))/(xSEM))**2) - minchi.fun < 1.05:
+                Zdbeq.append(dbeq)
+                Zdk.append(dk)
+plt.scatter(minchi.x[0],minchi.x[1], label = 'χ2 min')
+plt.scatter(Zdbeq,Zdk, label = 'contour')
+plt.legend()
+plt.xlabel("b_eq")
+plt.ylabel('k')
+plt.title("|1| Contour around minimum χ2")
+plt.show()
 
 
 

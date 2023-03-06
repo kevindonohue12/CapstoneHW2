@@ -67,8 +67,9 @@ for dA in np.arange(A - 1, A + 1, 0.01):
             if sum(((ym-(dA*np.power(x,dp)))/(ySEM))**2) - minchi.fun > 0.95 and sum(((ym-(dA*np.power(x,dp)))/(ySEM))**2) - minchi.fun < 1.05:
                 ZdA.append(dA)
                 Zdp.append(dp)
-plt.scatter(minchi.x[0],minchi.x[1])
-plt.scatter(ZdA,Zdp)
+plt.scatter(minchi.x[0],minchi.x[1],label = 'χ2 min')
+plt.scatter(ZdA,Zdp,label = 'contour')
+plt.legend()
 plt.xlabel("A")
 plt.ylabel('p')
 plt.title("|1| Contour around minimum χ2")
@@ -77,7 +78,7 @@ plt.show()
 #-----------------------------------------------------------------------------------------------------
 
 #b) Linearize the data and fit it using ordinary least squares (OLS). Find A and p. 
-#y=Ax^p becomes ln(y)=ln(A)+pln(x) or y=a0 + a1x with log scale
+#y=Ax^p becomes ln(y)=ln(A)+pln(x) or y= a0 + a1x
 logx = np.log(x)
 logym = np.log(ym)
 
