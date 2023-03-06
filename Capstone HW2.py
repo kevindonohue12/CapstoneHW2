@@ -108,13 +108,32 @@ AvalueWLS = np.exp(amatrixWLS[0])
 #Finding Uncertainties in A,p
 
 
+#-----------------------------------------------------------------------------------------------------
 
 #d) Plot the x, <y> data points with error bars on a log scale and the three fits as lines.
 #Compare and discuss the results and any differences between OLS and WLS. Include a comment 
 #on when WLS is most appropriate versus OLS. 
 
-#plt.errorbar(x,ym)
-#plt.show()
+xerror = 0.005
+plt.scatter(x,ym)
+plt.errorbar(x,ym, ls = 'none', xerr = xerror, yerr = ySEM, label= "Exp Data")
+
+bestfitax = np.linspace(0,10,15)
+bestfitay = minchi.x[0] * x**minchi.x[1]
+plt.plot(bestfitax, bestfitay, label = 'Power Law')
+bestfitbx = np.linspace(0,10,15)
+bestfitby = Avalue * x**amatrix[1]
+plt.plot(bestfitbx, bestfitby, label = 'OLS')
+bestfitcx = np.linspace(0,10,15)
+bestfitcy = AvalueWLS * x**amatrixWLS[1]
+plt.plot(bestfitcx, bestfitcy, label = 'WLS')
+plt.legend()
+plt.yscale('log')
+plt.xscale('log')
+plt.xlabel('x data')
+plt.ylabel('<y> data')
+plt.title('<y> as a function of x')
+plt.show()
 
 
 
