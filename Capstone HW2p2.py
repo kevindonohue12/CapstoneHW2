@@ -39,10 +39,10 @@ k = minchi.x[1]
 
 Zdbeq = []
 Zdk = []
-dbeq = np.arange(beq - 1, beq + 1, 0.1)
-dk = np.arange(k - 1, k + 1, 0.1)
-for dbeq in np.arange(beq - 1, beq + 1, 0.1):
-        for dk in np.arange(k - 1, k + 1, 0.1):
+dbeq = np.arange(beq - 0.01, beq + 0.01, 0.0001)
+dk = np.arange(k - 0.01, k + 0.01, 0.0001)
+for dbeq in np.arange(beq - 0.01, beq + 0.01, 0.0001):
+        for dk in np.arange(k - 0.01, k + 0.01, 0.0001):
             if sum(((xm-(dbeq - (dbeq-0.355)*np.power(m.e,-1*dk*tarr)))/(xSEM))**2) - minchi.fun > 0.90 and sum(((xm-(dbeq - (dbeq-0.355)*np.power(m.e,-1*dk*tarr)))/(xSEM))**2) - minchi.fun < 1.10:
                 Zdbeq.append(dbeq)
                 Zdk.append(dk)

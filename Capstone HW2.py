@@ -1,14 +1,8 @@
 import numpy as np
 from numpy import linalg
 import math as m
-#import pandas as pd
 import matplotlib.pyplot as plt
-#import statsmodels.api as sm
 from scipy.optimize import minimize
-#import statsmodels.api as sm
-#from mpl_toolkits.mplot3d import Axes3D
-#from mpl_toolkits import mplot3d
-#from scipy.stats import linregress
 
 #Setting names/variables for each column of the data
 x, y1, y2, y3, y4, y5, y6, y7, y8, y9, y10 = [], [], [], [], [], [], [], [], [], [], []
@@ -108,6 +102,26 @@ amatrixWLS = np.matmul(np.matmul(invalphaWLS,XmatrixTWLS), logymWLS)
 AvalueWLS = np.exp(amatrixWLS[0])
 
 #Finding Uncertainties in A,p
+AW = AvalueWLS
+pW = amatrixWLS[1]
+chiWLS = sum(((ym-(AW*np.power(x,pW)))/(ySEM))**2)
+
+ZdAW = []
+ZdpW = []
+dAW = np.arange(AW - 3, AW + 3, 0.01)
+dpW = np.arange(pW - 3, pW + 3, 0.01)
+for dAW in np.arange(AW - 3, AW + 3, 0.01):
+        for dpW in np.arange(pW - 3, pW + 3, 0.01):
+            if sum(((ym-(dAW*np.power(x,dpW)))/(ySEM))**2) - chiWLS > 0.95 and sum(((ym-(dAW*np.power(x,dpW)))/(ySEM))**2) - chiWLS < 1.05:
+                ZdAW.append(dAW)
+                ZdpW.append(dpW)
+plt.scatter(AW,pW,label = 'χ2 min')
+plt.scatter(ZdAW,ZdpW,label = 'contour')
+plt.legend()
+plt.xlabel("A")
+plt.ylabel('p')
+plt.title("|1| Contour around minimum χ2 WLS")
+plt.show()
 
 
 #-----------------------------------------------------------------------------------------------------
