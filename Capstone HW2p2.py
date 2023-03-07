@@ -1,14 +1,7 @@
 import numpy as np
-from numpy import linalg
 import math as m
-#import pandas as pd
 import matplotlib.pyplot as plt
-#import statsmodels.api as sm
 from scipy.optimize import minimize
-#import statsmodels.api as sm
-#from mpl_toolkits.mplot3d import Axes3D
-#from mpl_toolkits import mplot3d
-#from scipy.stats import linregress
 
 #Setting names/variables for each column of the data
 t, x1, x2, x3 = [], [], [], []
@@ -26,12 +19,13 @@ x_sum = np.zeros([len(t),1], dtype= float)
 
 #Fit the data to  𝑏(𝑡) = 𝑏_𝑒𝑞 − [𝑏_𝑒𝑞 − 0.355]𝑒^−𝑘𝑡
 xm = np.mean(x, axis=1)
-xSEM = np.std(x, axis=1)/m.sqrt(25)
+xSEM = np.std(x, axis=1)/m.sqrt(3)
 
 tarr = np.array(t)
 #Minimum χ2 (χ2min). Sum of (xm - the function)/ xSEM^2
 def chisquared(vars):
-    return sum(((xm[0:]-(vars[0] - (vars[0]-0.355)*np.power(m.e,-1*vars[1]*tarr[0:])))/(xSEM[0:]))**2)
+    return sum(((xm - (vars[0] - vars[0]*np.power(m.e,vars[1]*-1*tarr) + 0.355*np.power(m.e,vars[1]*-1*tarr)))/xSEM)**2)
+    #return sum(((xm-(vars[0] - (vars[0]-0.355)*np.power(m.e,-1*vars[1]*tarr)))/(xSEM))**2)
 
 minchi = minimize(chisquared, np.array([1,1]), method='nelder-mead')
 
@@ -45,11 +39,11 @@ k = minchi.x[1]
 
 Zdbeq = []
 Zdk = []
-dbeq = np.arange(beq - 1, beq + 1, 0.01)
-dk = np.arange(k - 1, k + 1, 0.01)
-for dbeq in np.arange(beq - 1, beq + 1, 0.01):
-        for dk in np.arange(k - 1, k + 1, 0.01):
-            if sum(((xm-(dbeq - (dbeq-0.355)*np.power(m.e,-1*dk*tarr)))/(xSEM))**2) - minchi.fun > 0.95 and sum(((xm-(dbeq - (dbeq-0.355)*np.power(m.e,-1*dk*tarr)))/(xSEM))**2) - minchi.fun < 1.05:
+dbeq = np.arange(beq - 1, beq + 1, 0.1)
+dk = np.arange(k - 1, k + 1, 0.1)
+for dbeq in np.arange(beq - 1, beq + 1, 0.1):
+        for dk in np.arange(k - 1, k + 1, 0.1):
+            if sum(((xm-(dbeq - (dbeq-0.355)*np.power(m.e,-1*dk*tarr)))/(xSEM))**2) - minchi.fun > 0.90 and sum(((xm-(dbeq - (dbeq-0.355)*np.power(m.e,-1*dk*tarr)))/(xSEM))**2) - minchi.fun < 1.10:
                 Zdbeq.append(dbeq)
                 Zdk.append(dk)
 plt.scatter(minchi.x[0],minchi.x[1], label = 'χ2 min')
@@ -61,7 +55,22 @@ plt.title("|1| Contour around minimum χ2")
 plt.show()
 
 
-
 #Plot the data with error bars. Show the fitted curve. Comment on the goodness of the fit. 
+terror = 0.005
+plt.scatter(t,xm)
+plt.errorbar(t,xm, ls = 'none', xerr = terror, yerr = xSEM, label= "Exp Data")
+
+#Best Fit Line from b_eq, k
+bestfitx = minchi.x[0] - (minchi.x[0] - 0.355)*np.power(m.e,-1*minchi.x[1]*tarr)
+plt.plot(t, bestfitx, label = 'Line of Best Fit')
+
+#Plot Parameters
+plt.legend()
+plt.yscale('log')
+plt.xscale('log')
+plt.xlabel('t data')
+plt.ylabel('<x> data')
+plt.title('<x> as a function of t')
+plt.show()
 
 
